@@ -7,7 +7,8 @@ SECRET_NUMBERS = Check.generate_numbers(4)
 ANSWERS = []
 OPTIONS = []
 context = {
-        'options': OPTIONS,
+        'num_options': OPTIONS,
+        'options': [],
         'answers': ANSWERS,
         'win': 0,
         'secret_nums': Check.generate_numbers(4),
@@ -18,6 +19,7 @@ def main_view(request):
     if request.method == 'GET':
         return render(request, 'index.html')
     elif request.method == 'POST':
+        OPTIONS.append(request.POST.get('numbers'))
         context['numbers'] = list(map(int, request.POST.get('numbers').split()))
         try:
             check = Check(context['numbers'], context['secret_nums'])
@@ -31,7 +33,6 @@ def main_view(request):
                     context['win'] += 1
                     context['secret_nums'] = Check.generate_numbers(4)
                 context['massage'] = result
-                OPTIONS.append(request.POST.get('numbers'))
                 ANSWERS.append(context['massage'])
                 return render(request, 'index.html', context)
         except ValueError:
